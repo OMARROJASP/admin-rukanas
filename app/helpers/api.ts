@@ -13,7 +13,7 @@ export const fetchProducts = async () => {
     try {
         const fetchProducts = await fetch(`${process.env.BACKEND_URL}/product`);
         const productsResult = await fetchProducts.json();
-        console.log("data products from:", productsResult.data.length);
+        console.log("data products from:", productsResult.data);
         return productsResult.data;
     } catch (error) {
         console.error("Error fetching data:", error);

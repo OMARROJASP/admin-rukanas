@@ -1,8 +1,17 @@
-const Products = () => {
+import { fetchProducts } from "@/app/helpers/api"
+import DataTable from "./data-table";
+
+
+
+
+const Products = async() => {
+    const listProducts = await fetchProducts()
     return (
-        <>
-        <h1>Page de Products</h1>
-        </>
+        <div>
+        <h1>Lista de Productos</h1>
+        <DataTable product={listProducts}/>
+         
+        </div>
     )
 }
 
