@@ -31,6 +31,8 @@ const DataTable = ({ product }: Props) => {
             <th className="px-6 py-3">Precio</th>
               <th className="px-6 py-3">Stock</th>
               <th className="px-6 py-3">Imagen</th>
+              <th className="px-6 py-3">Estado</th>
+              <th className="px-6 py-3">Editar</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 bg-white text-sm text-gray-700">
@@ -48,6 +50,14 @@ const DataTable = ({ product }: Props) => {
                   height={32}
                   className="rounded-full"
                 />
+              </td>
+              <td className="px-6 py-4 font-medium text-white">
+                <div className="flex items-center justify-center bg-green-500 rounded-xl">
+                  Activo
+                </div>
+              </td>
+              <td className="px-6 py-4 font-medium text-gray-900">
+                <button className="px-4 py-2 bg-yellow-300 text-white rounded hover:bg-yellow-600">Editar</button>
               </td>              
             </tr>
           ))}
