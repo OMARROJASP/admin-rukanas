@@ -3,6 +3,7 @@
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { fetchProductsByFilters } from "@/app/helpers/api"
 
 const Search = () => {
   const pathname = usePathname();
@@ -12,14 +13,19 @@ const Search = () => {
   const handleOnChange = useDebouncedCallback((value: string) => {
     const params = new URLSearchParams(searchParams); // Clonamos params actuales
     if (value) {
-      params.set("query", value);
+      params.set("text", value);
     } else {
-      params.delete("query");
+      params.delete("text");
     }
-    replace(`${pathname}?${params.toString()}`);
+    dai(text)
+     replace(`${pathname}?${params.toString()}`);
   }, 1000);
 
-  const [text, setText] = useState(searchParams.get("query") || "");
+  const dai = async(texto: string) => {
+    console.log("texto%%%%%%%%%%%%%%%%%", texto);
+      const listProducts = await fetchProductsByFilters(texto)
+  }
+  const [text, setText] = useState(searchParams.get("text") || "");
 
   return (
     <div className="mb-4 flex">

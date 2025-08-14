@@ -1,25 +1,22 @@
-"use client"
+
+
 
 import * as React from "react"
 import Image from "next/image";
+import { fetchProductsByFilters } from "@/app/helpers/api"
+import { FC } from "react";
 
-interface Props {
-    product: {
-        prod_id: string;
-        prod_name: string,
-        prod_price: string,
-        prod_description: string,
-        prod_imageUrl: string,      
-        prod_category: string,
-        prod_stock: number,
-        prod_ofert: number,
-        prod_supplier: string
-    }[]
+
+
+interface TableProps {
+    text?: string;
 }
 
 
+const DataTable:FC <TableProps> = async({ text }) => {
 
-const DataTable = ({ product }: Props) => {
+  const listProducts = await fetchProductsByFilters(text || "");
+  console.log("listProducts", listProducts);
     
      return (
     <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
@@ -36,7 +33,7 @@ const DataTable = ({ product }: Props) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 bg-white text-sm text-gray-700">
-          {product.map((row, index) => (
+          {listProducts.map((row, index:number) => (
             <tr key={index}>
                 <td className="px-6 py-4">{index}</td>
               <td className="px-6 py-4 font-medium text-gray-900">{row.prod_name}</td>

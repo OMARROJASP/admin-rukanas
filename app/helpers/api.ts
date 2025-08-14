@@ -44,3 +44,37 @@ export const fetchOrdersForDays = async () => {
     }       
 }
 
+export interface Product {
+  prod_id: string;
+  prod_name: string;
+  prod_price: string;
+  prod_description: string;
+  prod_imageUrl: string;      
+  prod_category: string;
+  prod_stock: number;
+  prod_ofert: number;
+  prod_supplier: string;
+  prod_state: boolean;
+}
+
+export const fetchProductsByFilters = async (texto?: string) => {
+    try {
+        //const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+       //const params = {
+         //   text: texto || "",
+        //    category: "3",
+        //    page: "2"
+        //};
+        console.log("Antes de la llamada")
+       
+        const fetchProducts = await fetch(`http://localhost:3001/product/filtro?text=${encodeURIComponent(texto || "")}`)
+        const productsResult = await fetchProducts.json();
+         await new Promise(resolve => setTimeout(resolve, 3000)); // Simula un retraso de 1 segundo
+          console.log("Despues de la llamada")
+        return productsResult.data.products as Product[];
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return [];
+    }   
+}
+
