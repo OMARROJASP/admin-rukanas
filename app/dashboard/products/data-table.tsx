@@ -5,6 +5,7 @@ import * as React from "react"
 import Image from "next/image";
 import { fetchProductsByFilters } from "@/app/helpers/api"
 import { FC } from "react";
+import Link from "next/link";
 
 
 
@@ -16,7 +17,7 @@ interface TableProps {
 const DataTable:FC <TableProps> = async({ text }) => {
 
   const listProducts = await fetchProductsByFilters(text || "");
-  console.log("listProducts", listProducts);
+
     
      return (
     <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
@@ -54,7 +55,7 @@ const DataTable:FC <TableProps> = async({ text }) => {
                 </div>
               </td>
               <td className="px-6 py-4 font-medium text-gray-900">
-                <button className="px-4 py-2 bg-yellow-300 text-white rounded hover:bg-yellow-600">Editar</button>
+                <Link href={`products/${row.prod_id}`} className="px-4 py-2 bg-yellow-300 text-white rounded hover:bg-yellow-600" >Editar</Link>
               </td>              
             </tr>
           ))}

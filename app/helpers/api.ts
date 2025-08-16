@@ -20,6 +20,19 @@ export const fetchProducts = async () => {
         return [];
     }   
 }
+
+export const fetchCategories = async () => {
+    try {
+        const fetchCategories = await fetch(`${process.env.BACKEND_URL}/category`);
+        const categoriesResult = await fetchCategories.json();
+        console.log("data categories from:", categoriesResult.data);
+        return categoriesResult.data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return [];
+    }   
+}
+
 export const fetchOrders = async () => {
     try {
         const fetchOrder = await fetch(`${process.env.BACKEND_URL}/order`);   
