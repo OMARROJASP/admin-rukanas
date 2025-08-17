@@ -23,17 +23,20 @@ export const fetchProducts = async () => {
 
 export const updateProduct = async (id: number, product: FormData) => {
   try {
-    const fetchProducts = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/product/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/product/${id}`, {
       method: "PUT",
-      body: product, // 👈 directo, sin JSON.stringify
+      body: product,
     });
 
-    const productsResult = await fetchProducts.json();
-    console.log("data products from:", productsResult.data);
-    return productsResult.data;
+    // Si no responde bien
+
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Error al actualizar producto");
+    }
+    return await res.json();
   } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
+    throw error;
   }
 };
 

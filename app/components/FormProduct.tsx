@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { FC, useEffect, useState } from "react";
 import { updateProduct } from "../helpers/api";
+import { toast } from "sonner";
 
 
 interface Categoria {
@@ -38,7 +39,7 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
         prod_price: producto.prod_price,
         prod_description: producto.prod_description,
         prod_imageUrl: producto.prod_imageUrl,
-        prod_category: producto.prod_category,
+        prod_category: parseInt(producto.prod_category) ? producto.prod_category : "",
         prod_stock: producto.prod_stock,
         prod_ofert: producto.prod_ofert,
         prod_state: producto.prod_state,
@@ -62,8 +63,10 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
     prod_supplier: "",
   });
 
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true)
     console.log("Producto enviado:", product);
 
     const formData = new FormData();
@@ -82,7 +85,21 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
     // Aquí puedes hacer la llamada a la API para guardar el producto
     console.log("Datos del formulario:", formData);
     // Ejemplo de llamada a la API
-    await updateProduct(product.prod_id,formData);
+
+    try {
+      const res =  await updateProduct(product.prod_id,formData);
+
+      toast.success( res.message ||"Producto Actualizado Correctamente")
+    } catch (error:any) {
+      toast.error(error.message || "❌ No se pudo actualizar el producto")
+    } finally {
+      setLoading(false)
+    }
+    
+
+    
+   
+    
     
   };
 
@@ -93,7 +110,7 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
     <>
       <form onSubmit={handleSubmit} className="p-4 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold mb-4">Editar Producto</h1>
-        <div className="mb-4 grid grid-cols-1 sm:grid-cols-1 col-start-2 gap-4">
+        <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* {typeof product.prod_imageUrl === "string" && product.prod_imageUrl !== "" && (
             <div className="mb-4 col-span-3 sm:col-span-1 flex justify-center items-center" >
                <Image
@@ -105,7 +122,7 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
               />
             </div>
           ) } */}
-          <div className="mb-4 col-span-3">
+          <div className="mb-4 col-span-2">
             <label className="block text-sm font-medium text-gray-700">
               Imagen
             </label>
@@ -135,7 +152,12 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
             <label className="block text-sm font-medium text-gray-700">
               Categoria
             </label>
-            <select className="mt-1 block w-full border-gray-500 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 h-[30px]">
+            <select 
+            value={product.prod_category || ""}
+            onChange={(e) => 
+              setProduct({...product, prod_category: e.target.value })
+            }
+            className="mt-1 block w-full border-gray-500 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 h-[30px]">
               <option value="">Escoja una opcion</option>
               {categories.map((cat: any, index: number) => (
                 <option key={index} value={cat.cat_id}>
@@ -192,7 +214,10 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
             <label className="block text-sm font-medium text-gray-700">
               Estado
             </label>
-            <select className="mt-1 block w-full border-gray-500 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 h-[30px]">
+            <select 
+            value={product.prod_state ? "1" : "0"}
+            onChange={(e) => setProduct({...product,  prod_state: Boolean(Number(e.target.value)),})}
+            className="mt-1 block w-full border-gray-500 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 h-[30px]">
               <option value="0">Oculto</option>
               <option value="1">Visible </option>
             </select>
@@ -213,7 +238,7 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
           type="submit"
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
-          Guardar Cambios
+               {loading ? "Actualizando..." : "Actualizar"}
         </button>
       </form>
     </>
@@ -221,3 +246,6 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
 };
 
 export default Page;
+
+
+

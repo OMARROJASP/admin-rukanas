@@ -36,7 +36,7 @@ const DataTable:FC <TableProps> = async({ text }) => {
         <tbody className="divide-y divide-gray-100 bg-white text-sm text-gray-700">
           {listProducts.map((row, index:number) => (
             <tr key={index}>
-                <td className="px-6 py-4">{index}</td>
+                <td className="px-6 py-4">{index + 1}</td>
               <td className="px-6 py-4 font-medium text-gray-900">{row.prod_name}</td>
               <td className="px-6 py-4 font-medium text-gray-900">{row.prod_price}</td>
               <td className="px-6 py-4 font-medium text-gray-900">{row.prod_stock}</td>

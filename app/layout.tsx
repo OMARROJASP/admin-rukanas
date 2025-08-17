@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import '../app/ui/globals.css'
 import { roboto } from "./ui/font";
 import { FC, PropsWithChildren } from "react";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Panel admin rukanas",
@@ -13,6 +14,7 @@ const RootLayout: FC<PropsWithChildren> = ({ children }) => {
         <html>
             <body className={`${roboto.className} antialiased`}>
                 {children}
+                <Toaster position="top-right" richColors />
             </body>
         </html>
     )
