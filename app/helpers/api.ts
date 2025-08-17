@@ -21,6 +21,23 @@ export const fetchProducts = async () => {
     }   
 }
 
+export const updateProduct = async (id: number, product: FormData) => {
+  try {
+    const fetchProducts = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/product/${id}`, {
+      method: "PUT",
+      body: product, // 👈 directo, sin JSON.stringify
+    });
+
+    const productsResult = await fetchProducts.json();
+    console.log("data products from:", productsResult.data);
+    return productsResult.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return [];
+  }
+};
+
+
 export const fetchProductsById = async (id:number) => {
     try {
         const fetchProduct = await fetch(`${process.env.BACKEND_URL}/product/${id}`);

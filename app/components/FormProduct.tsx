@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { FC, useEffect, useState } from "react";
+import { updateProduct } from "../helpers/api";
 
 
 interface Categoria {
@@ -61,7 +62,7 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
     prod_supplier: "",
   });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("Producto enviado:", product);
 
@@ -81,7 +82,7 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
     // Aquí puedes hacer la llamada a la API para guardar el producto
     console.log("Datos del formulario:", formData);
     // Ejemplo de llamada a la API
-    
+    await updateProduct(product.prod_id,formData);
     
   };
 
