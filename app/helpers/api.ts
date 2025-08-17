@@ -21,6 +21,18 @@ export const fetchProducts = async () => {
     }   
 }
 
+export const fetchProductsById = async (id:number) => {
+    try {
+        const fetchProduct = await fetch(`${process.env.BACKEND_URL}/product/${id}`);
+        const productResult = await fetchProduct.json();
+        console.log("data product from:", productResult.data);
+        return productResult.data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return [];
+    }   
+}
+
 export const fetchCategories = async () => {
     try {
         const fetchCategories = await fetch(`${process.env.BACKEND_URL}/category`);
