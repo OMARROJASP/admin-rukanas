@@ -11,12 +11,17 @@ import Link from "next/link";
 
 interface TableProps {
     text?: string;
+    page?: string;
 }
 
 
-const DataTable:FC <TableProps> = async({ text }) => {
+const DataTable:FC <TableProps> = async({ text, page =1 }) => {
 
-  const listProducts = await fetchProductsByFilters(text || "");
+  //const listProducts = await fetchProductsByFilters(text || "");
+  const data = await fetchProductsByFilters(text || "", Number(page));
+
+  const listProducts = data.products
+
 
     
      return (

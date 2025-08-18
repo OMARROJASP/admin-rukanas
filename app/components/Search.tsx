@@ -22,8 +22,8 @@ const Search = () => {
   }, 1000);
 
   const dai = async(texto: string) => {
-    console.log("texto%%%%%%%%%%%%%%%%%", texto);
-      const listProducts = await fetchProductsByFilters(texto)
+    await fetchProductsByFilters(texto)
+      //const listProducts = await fetchProductsByFilters(texto)
   }
   const [text, setText] = useState(searchParams.get("text") || "");
 

@@ -102,7 +102,20 @@ export interface Product {
   prod_state: boolean;
 }
 
-export const fetchProductsByFilters = async (texto?: string) => {
+export interface Pagination {
+    totalItems:Product[];
+    currentPage: number;
+    totalPages: number;
+    itemsPerPage: number;
+}
+
+
+export interface Data {
+    products: Product[];
+    pagination: Pagination;
+}
+
+export const fetchProductsByFilters = async (texto?: string, page?:number): Promise<Data>  => {
     try {
         //const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
        //const params = {
@@ -110,16 +123,29 @@ export const fetchProductsByFilters = async (texto?: string) => {
         //    category: "3",
         //    page: "2"
         //};
-        console.log("Antes de la llamada")
+        // console.log("Antes de la llamada")
+        const limit = 3
        
-        const fetchProducts = await fetch(`http://localhost:3001/product/filtro?text=${encodeURIComponent(texto || "")}`)
+    const fetchProducts = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/product/filtro?text=${encodeURIComponent(texto || "")}&page=${encodeURIComponent(page || 1)}&limit=${encodeURIComponent(limit)}`
+    );
         const productsResult = await fetchProducts.json();
-         await new Promise(resolve => setTimeout(resolve, 3000)); // Simula un retraso de 1 segundo
-          console.log("Despues de la llamada")
-        return productsResult.data.products as Product[];
+        //  await new Promise(resolve => setTimeout(resolve, 3000)); // Simula un retraso de 1 segundo
+        //   console.log("Despues de la llamada")
+        console.log(productsResult.data)
+        //return productsResult.data.products as Product[];
+        return productsResult.data as Data;
     } catch (error) {
         console.error("Error fetching data:", error);
-        return [];
+         return {
+      products: [],
+      pagination: {
+        totalItems: [],
+        currentPage: page || 1,
+        totalPages: 0,
+        itemsPerPage: 3,
+      },
+    };
     }   
 }
 
