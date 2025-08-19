@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const links = [
     {name: "Dashboard", href: "/dashboard", icon: FaHome},
-    {name: "Products", href:"/dashboard//products", icon: FaProductHunt },
+    {name: "Products", href:"/dashboard/products", icon: FaProductHunt },
     // {name: "Categories", href:"/dashboard//categories", icon: BiCategory  },
     {name: "Customers", href: "/dashboard/customers", icon: FaUsers}
     ]
