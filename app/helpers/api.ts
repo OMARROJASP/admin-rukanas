@@ -21,6 +21,28 @@ export const fetchProducts = async () => {
     }   
 }
 
+export const saveProduct = async ( product: FormData) => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/product`, {
+      method: "POST",
+      body: product,
+    });
+
+    // Si no responde bien
+
+    const data = await res.json(); // 👈 solo una vez
+
+    if (!res.ok) {
+      throw new Error(data.message || "Error al guardar producto");
+    }
+
+    return data; // { message, data, success }
+  } catch (error) {
+    console.error("Error en saveProduct:", error);
+    throw error;
+  }
+};
+
 export const updateProduct = async (id: number, product: FormData) => {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/product/${id}`, {

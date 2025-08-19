@@ -8,15 +8,15 @@ export const LoginSchema = z.object({
 export type LoginType  = z.infer<typeof LoginSchema>
 
 
-export const RegisterProductSchema = z.object({
-    imageUrl: z.file(),
-    name: z.string(),
-    price: z.number(),
-    description: z.string().max(100, "La descripcion es muy larga mas de 100 caracteres"),
-    category: z.number(),
-    stock: z.number(),
-    supplier: z.number(),
-    state: z.boolean(),
+export const ProductSchema = z.object({
+    name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
+    price: z.coerce.number().positive("El precio debe ser mayor a 0"),
+    description: z.string().min(5, "La descripción es obligatoria"),
+    category: z.coerce.number().int().positive("Selecciona una categoría válida"),
+    stock: z.coerce.number().int().min(0, "El stock no puede ser negativo"),
+    supplier: z.coerce.number().int().positive("Selecciona un proveedor válido"),
+    state: z.string().min(1, "Selecciona el estado"),
+    ofert:z.coerce.number().int().min(0, "El stock no puede ser negativo"),
 })
 
-export type RegisterProductType = z.infer<typeof RegisterProductSchema>
+export type ProductType = z.infer<typeof ProductSchema>

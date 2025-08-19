@@ -5,9 +5,6 @@ import { useParams } from "next/navigation";
 import React, { FC, useEffect, useState } from "react";
 import { updateProduct } from "../helpers/api";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { RegisterProductSchema, RegisterProductType } from "../schemas/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 
 interface Categoria {
@@ -33,14 +30,7 @@ interface FormProductProps {
   producto?: Producto;
 }
 const Page:FC<FormProductProps> =  ({categories, producto}) => {
-
-  const {
-    register, 
-    handleSubmit,
-    formState: {errors, isSubmitting}
-  } = useForm<RegisterProductType>({
-    resolver: zodResolver(RegisterProductSchema)
-  })
+  
   
   useEffect(() => {
     if (producto) {
