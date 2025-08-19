@@ -7,7 +7,7 @@ const CreateProduct = async() => {
     const categories = await fetchCategories();
     return (
         <>
-            <CreateProductForm    />
+            <CreateProductForm  categories={categories}  />
         </>
     )
 }

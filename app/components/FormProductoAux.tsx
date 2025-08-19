@@ -3,11 +3,19 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProductSchema, ProductType } from "@/app/schemas/auth";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { saveProduct } from "../helpers/api";
 import { toast } from "sonner";
 
-export default function CreateProductForm() {
+interface Categoria {
+  id: number;
+  name: string;
+}
+interface FormProductProps {
+  categories: Categoria[]
+}
+
+const CreateProductForm:FC<FormProductProps> = ({categories}) => {
   const [preview, setPreview] = useState<string | null>(null);
 
   const {
@@ -38,12 +46,11 @@ export default function CreateProductForm() {
         formData.append("prod_imageUrl", fileInput);
       }
 
+      const res = await saveProduct(formData);
 
-      const res = await saveProduct(formData)
-
-      toast.success( res.message ||"Producto guardo Correctamente")
-    } catch (error:any) {
-      toast.error(error.message || "❌ No se pudo guardar el producto")
+      toast.success(res.message || "Producto guardo Correctamente");
+    } catch (error: any) {
+      toast.error(error.message || "❌ No se pudo guardar el producto");
     }
   };
 
@@ -58,9 +65,11 @@ export default function CreateProductForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-md mx-auto space-y-4 p-4 border rounded-lg shadow"
+      className="p-4 bg-white rounded-lg shadow-md"
     >
-      <div>
+         <h1 className="text-2xl font-bold mb-4">Crear Producto</h1>
+         <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div className="mb-4 col-span-3 sm:col-span-1">
         <label>Nombre</label>
         <input
           {...register("name")}
@@ -72,7 +81,7 @@ export default function CreateProductForm() {
         )}
       </div>
 
-      <div>
+      <div className="mb-4 col-span-3 sm:col-span-1">
         <label>Precio</label>
         <input
           type="number"
@@ -85,7 +94,7 @@ export default function CreateProductForm() {
           <p className="text-red-500 text-sm">{errors.price.message}</p>
         )}
       </div>
-      <div>
+      <div className="mb-4 col-span-3 sm:col-span-1">
         <label>Oferta</label>
         <input
           type="number"
@@ -99,7 +108,7 @@ export default function CreateProductForm() {
         )}
       </div>
 
-      <div>
+      <div className="mb-4 col-span-3 sm:col-span-2">
         <label>Descripción</label>
         <textarea
           {...register("description")}
@@ -111,19 +120,22 @@ export default function CreateProductForm() {
         )}
       </div>
 
-      <div>
+      <div className="mb-4 col-span-3 sm:col-span-1">
         <label>Categoría</label>
-        <input
-          type="number"
-          {...register("category")}
-          className="border w-full p-2 rounded"
-        />
+        <select {...register("category")} className="border w-full p-2 rounded">
+          <option value="">Selecciona...</option>
+        {categories.map((cat: any, index: number) => (
+                <option key={index} value={cat.cat_id}>
+                  {cat.cat_name}
+                </option>
+              ))}
+              </select>
         {errors.category && (
           <p className="text-red-500 text-sm">{errors.category.message}</p>
         )}
       </div>
 
-      <div>
+      <div className="mb-4 col-span-3 sm:col-span-1">
         <label>Stock</label>
         <input
           type="number"
@@ -135,7 +147,7 @@ export default function CreateProductForm() {
         )}
       </div>
 
-      <div>
+      <div className="mb-4 col-span-3 sm:col-span-1">
         <label>Proveedor</label>
         <input
           type="number"
@@ -147,7 +159,7 @@ export default function CreateProductForm() {
         )}
       </div>
 
-      <div>
+      <div className="mb-4 col-span-3 sm:col-span-1">
         <label>Estado</label>
         <select {...register("state")} className="border w-full p-2 rounded">
           <option value="">Selecciona...</option>
@@ -159,7 +171,7 @@ export default function CreateProductForm() {
         )}
       </div>
 
-      <div>
+      <div className="mb-4 col-span-2">
         <label>Imagen</label>
         <input
           type="file"
@@ -176,13 +188,19 @@ export default function CreateProductForm() {
         )}
       </div>
 
-      <button
+      
+         </div>
+         <button
         type="submit"
         disabled={isSubmitting}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
         {isSubmitting ? "Guardando..." : "Guardar"}
       </button>
+      
     </form>
   );
 }
+
+
+export default CreateProductForm;

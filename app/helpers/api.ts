@@ -1,3 +1,7 @@
+"use server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
 export const fetchCustomers = async () => {
     try {
         const fetchCustomers = await fetch(`${process.env.BACKEND_URL}/customer`);
@@ -40,6 +44,9 @@ export const saveProduct = async ( product: FormData) => {
   } catch (error) {
     console.error("Error en saveProduct:", error);
     throw error;
+  } finally {
+    revalidatePath("/dashboard/invoices");
+    redirect("/dashboard/invoices");
   }
 };
 
