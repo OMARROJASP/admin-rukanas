@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { FC, useEffect, useState } from "react";
 import { updateProduct } from "../helpers/api";

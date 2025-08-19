@@ -6,10 +6,12 @@ import { ProductSchema, ProductType } from "@/app/schemas/auth";
 import { FC, useState } from "react";
 import { saveProduct } from "../helpers/api";
 import { toast } from "sonner";
+import router from "next/router";
+import Image from "next/image";
 
 interface Categoria {
-  id: number;
-  name: string;
+  cat_id: number;
+  cat_name: string;
 }
 interface FormProductProps {
   categories: Categoria[]
@@ -18,13 +20,13 @@ interface FormProductProps {
 const CreateProductForm:FC<FormProductProps> = ({categories}) => {
   const [preview, setPreview] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<ProductType>({
-    resolver: zodResolver(ProductSchema),
-  });
+ const {
+  register,
+  handleSubmit,
+  formState: { errors, isSubmitting },
+} = useForm({
+  resolver: zodResolver(ProductSchema),
+});
 
   const onSubmit = async (data: ProductType) => {
     try {
@@ -40,27 +42,24 @@ const CreateProductForm:FC<FormProductProps> = ({categories}) => {
       formData.append("prod_ofert", String(data.ofert));
 
       // archivo (si existe)
-      const fileInput = (document.getElementById("file") as HTMLInputElement)
-        ?.files?.[0];
-      if (fileInput) {
-        formData.append("prod_imageUrl", fileInput);
-      }
+      // archivo
+    if (data.image && data.image.length > 0) {
+      formData.append("prod_imageUrl", data.image[0]);
+    }
 
       const res = await saveProduct(formData);
 
       toast.success(res.message || "Producto guardo Correctamente");
-    } catch (error: any) {
-      toast.error(error.message || "❌ No se pudo guardar el producto");
-    }
+      router.push("/dashboard/products"); 
+    } catch (error: unknown) {
+  if (error instanceof Error) {
+    toast.error(error.message);
+  } else {
+    toast.error("❌ No se pudo guardar el producto");
+  }
+}
   };
 
-  // Previsualizar imagen
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-    }
-  };
 
   return (
     <form
@@ -124,7 +123,7 @@ const CreateProductForm:FC<FormProductProps> = ({categories}) => {
         <label>Categoría</label>
         <select {...register("category")} className="border w-full p-2 rounded">
           <option value="">Selecciona...</option>
-        {categories.map((cat: any, index: number) => (
+        {categories.map((cat: Categoria, index: number) => (
                 <option key={index} value={cat.cat_id}>
                   {cat.cat_name}
                 </option>
@@ -171,22 +170,37 @@ const CreateProductForm:FC<FormProductProps> = ({categories}) => {
         )}
       </div>
 
-      <div className="mb-4 col-span-2">
-        <label>Imagen</label>
+     <div>
         <input
           type="file"
-          id="file"
-          onChange={handleFileChange}
-          className="block"
+          accept="image/*"
+          {...register("image")}
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) {
+              setPreview(URL.createObjectURL(file))
+            } else {
+              setPreview(null)
+            }
+          }}
+          className="block w-full"
         />
-        {preview && (
-          <img
-            src={preview}
-            alt="preview"
-            className="mt-2 w-32 h-32 object-cover rounded"
-          />
-        )}
+        {errors.image && <p className="text-red-500">{errors.image.message?.toString()}</p>}
       </div>
+
+      {preview && (
+  <div className="mt-4">
+    <p className="text-sm text-gray-600">Vista previa:</p>
+    <Image
+      src={preview}
+      alt="Vista previa"
+      width={160}   // 👈 necesario, Next exige width/height
+      height={160}
+      className="w-40 h-40 object-cover rounded border"
+      unoptimized   // 👈 evita que Next intente optimizar un blob/base64
+    />
+  </div>
+)}
 
       
          </div>
