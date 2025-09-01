@@ -3,22 +3,55 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProductSchema, ProductType } from "@/app/schemas/auth";
-import { FC, useState } from "react";
-import { saveProduct } from "../helpers/api";
+import { FC, useEffect, useState } from "react";
+import { saveProduct, updateProduct } from "../helpers/api";
 import { toast } from "sonner";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 interface Categoria {
   cat_id: number;
   cat_name: string;
 }
-interface FormProductProps {
-  categories: Categoria[]
+interface Producto {
+  prod_id: number;
+  prod_name: string;
+  prod_price: number;
+  prod_description: string;
+  prod_imageUrl: File | string;
+  prod_category: string;
+  prod_stock: number;
+  prod_ofert: number;
+  prod_state: boolean;
+  prod_supplier: string;
 }
+interface FormProductProps {
+  categories: Categoria[],
+  product?: Producto;
+}
+export const mapProductoToForm = (p: Producto): Partial<ProductType> => ({
+  name: p.prod_name,
+  price: p.prod_price,
+  description: p.prod_description,
+  category: Number(p.prod_category), // 👈 depende de si en backend es string o id
+  stock: p.prod_stock,
+  ofert: p.prod_ofert,
+  supplier: Number(p.prod_supplier), // 👈 igual, depende de backend
+  state: p.prod_state ? "1" : "0",   // 👈 porque en el form tienes string
+  //image:p.prod_imageUrl
+  // la imagen no la ponemos porque viene como string (url) y en form espera FileList
+});
 
-const CreateProductForm:FC<FormProductProps> = ({categories}) => {
+
+const CreateProductForm:FC<FormProductProps> = ({categories, product}) => {
   const [preview, setPreview] = useState<string | null>(null);
+
+
+  const actions = {
+  idle: product ? "Actualizar" : "Guardar",
+  submitting: product ? "Actualizando..." : "Guardando...",
+};
+  
 
  const {
   register,
@@ -26,7 +59,17 @@ const CreateProductForm:FC<FormProductProps> = ({categories}) => {
   formState: { errors, isSubmitting },
 } = useForm({
   resolver: zodResolver(ProductSchema),
+  defaultValues: product ? mapProductoToForm(product) : {}
 });
+
+useEffect(() => {
+  if (product?.prod_imageUrl && typeof product.prod_imageUrl === "string") {
+    setPreview(product.prod_imageUrl);
+  }
+}, [product]);
+
+
+const router = useRouter();
 
   const onSubmit = async (data: ProductType) => {
     try {
@@ -47,7 +90,13 @@ const CreateProductForm:FC<FormProductProps> = ({categories}) => {
       formData.append("prod_imageUrl", data.image[0]);
     }
 
-      const res = await saveProduct(formData);
+      let res;
+    if (product) {
+      res = await updateProduct(product.prod_id, formData); // 👈 si hay producto, editar
+    } else {
+      res = await saveProduct(formData); // 👈 si no, crear
+    }
+
 
       toast.success(res.message || "Producto guardo Correctamente");
       router.push("/dashboard/products"); 
@@ -66,7 +115,9 @@ const CreateProductForm:FC<FormProductProps> = ({categories}) => {
       onSubmit={handleSubmit(onSubmit)}
       className="p-4 bg-white rounded-lg shadow-md"
     >
-         <h1 className="text-2xl font-bold mb-4">Crear Producto</h1>
+         <h1 className="text-2xl font-bold mb-4">
+            {product ? "Editar Producto" : "Crear Producto"}
+         </h1>
          <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
 <div className="mb-4 col-span-3 sm:col-span-1">
         <label>Nombre</label>
@@ -133,6 +184,7 @@ const CreateProductForm:FC<FormProductProps> = ({categories}) => {
           <p className="text-red-500 text-sm">{errors.category.message}</p>
         )}
       </div>
+      
 
       <div className="mb-4 col-span-3 sm:col-span-1">
         <label>Stock</label>
@@ -162,26 +214,22 @@ const CreateProductForm:FC<FormProductProps> = ({categories}) => {
         <label>Estado</label>
         <select {...register("state")} className="border w-full p-2 rounded">
           <option value="">Selecciona...</option>
-          <option value="active">Activo</option>
-          <option value="inactive">Inactivo</option>
+          <option value="1">Activo</option>
+          <option value="0">Inactivo</option>
         </select>
         {errors.state && (
           <p className="text-red-500 text-sm">{errors.state.message}</p>
         )}
       </div>
 
-     <div>
+      <div>
         <input
           type="file"
           accept="image/*"
           {...register("image")}
           onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (file) {
-              setPreview(URL.createObjectURL(file))
-            } else {
-              setPreview(null)
-            }
+            const file = e.target.files?.[0];
+          if (file) setPreview(URL.createObjectURL(file));
           }}
           className="block w-full"
         />
@@ -209,7 +257,7 @@ const CreateProductForm:FC<FormProductProps> = ({categories}) => {
         disabled={isSubmitting}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
-        {isSubmitting ? "Guardando..." : "Guardar"}
+         {isSubmitting ? actions.submitting : actions.idle}
       </button>
       
     </form>

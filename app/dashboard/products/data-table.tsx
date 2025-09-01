@@ -6,7 +6,7 @@ import Image from "next/image";
 import { fetchProductsByFilters } from "@/app/helpers/api"
 import { FC } from "react";
 import Link from "next/link";
-
+import clsx from "clsx";
 
 
 interface TableProps {
@@ -55,8 +55,11 @@ const DataTable:FC <TableProps> = async({ text, page =1 }) => {
                 />
               </td>
               <td className="px-6 py-4 font-medium text-white">
-                <div className="flex items-center justify-center bg-green-500 rounded-xl">
-                  Activo
+                <div  className={clsx(
+                  "flex items-center justify-center rounded-xl p-[5px]",
+                  row.prod_state ? "bg-green-500" : "bg-red-500"
+                )}>
+                  {row.prod_state ? 'Activo' : 'Desacticado'}
                 </div>
               </td>
               <td className="px-6 py-4 font-medium text-gray-900">

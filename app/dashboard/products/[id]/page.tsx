@@ -1,5 +1,5 @@
 
-import FormProduct from "@/app/components/FormProduct";
+import CreateProductForm from "@/app/components/FormProductoAux";
 import { fetchCategories, fetchProductsById } from "@/app/helpers/api";
 
 interface PageProps {
@@ -16,7 +16,7 @@ const Page =  async ({params}: PageProps) => {
 
   return (
     <>
-      <FormProduct producto={product} categories={categories}  />
+      <CreateProductForm product={product} categories={categories}  />
     </>
   );
 };

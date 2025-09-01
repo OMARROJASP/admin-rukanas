@@ -19,14 +19,18 @@ export const ProductSchema = z.object({
     ofert: z.coerce.number().int().min(0, "La oferta no puede ser negativa"),
 
     image: z
-    .any()
-    .refine(
-        (file) =>
-        file instanceof FileList &&
-        file.length > 0 &&
-        file[0].type.startsWith("image/"),
-        { message: "El archivo debe ser una imagen válida" }
-    ),
+  .any()
+  .optional()
+  .refine(
+    (file) => {
+      // Si no hay nada, pasa (no es obligatorio en edición)
+      if (!file || (file instanceof FileList && file.length === 0)) return true;
+
+      // Si hay archivo, validar que sea imagen
+      return file instanceof FileList && file[0]?.type.startsWith("image/");
+    },
+    { message: "El archivo debe ser una imagen válida" }
+  )
 })
 
 export type ProductType = z.infer<typeof ProductSchema>

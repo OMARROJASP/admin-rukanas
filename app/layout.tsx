@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import '../app/ui/globals.css'
+import "../app/ui/globals.css";
 import { roboto } from "./ui/font";
 import { FC, PropsWithChildren } from "react";
-import { Toaster } from "sonner";
+import Providers from "./components/provider";
 
 export const metadata: Metadata = {
   title: "Panel admin rukanas",
@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 };
 
 const RootLayout: FC<PropsWithChildren> = ({ children }) => {
-    return (
-        <html>
-            <body className={`${roboto.className} antialiased`}>
-                {children}
-                <Toaster position="top-right" richColors />
-            </body>
-        </html>
-    )
-}
+  return (
+    <html>
+      <body className={`${roboto.className} antialiased`}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+};
+
 export default RootLayout;

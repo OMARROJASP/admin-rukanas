@@ -148,7 +148,7 @@ export const fetchProductsByFilters = async (texto?: string, page?:number): Prom
         //    page: "2"
         //};
         // console.log("Antes de la llamada")
-        const limit = 3
+        const limit = 10
        
     const fetchProducts = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/product/filtro?text=${encodeURIComponent(texto || "")}&page=${encodeURIComponent(page || 1)}&limit=${encodeURIComponent(limit)}`
