@@ -1,13 +1,15 @@
 
 import {  FaHome, FaProductHunt, FaUsers } from "react-icons/fa";
+import { RiAdvertisementLine } from "react-icons/ri";
 import { BiCategory } from "react-icons/bi";
 import Link from "next/link";
 
 const links = [
     {name: "Dashboard", href: "/dashboard", icon: FaHome},
     {name: "Products", href:"/dashboard/products", icon: FaProductHunt },
-    // {name: "Categories", href:"/dashboard//categories", icon: BiCategory  },
-    {name: "Customers", href: "/dashboard/customers", icon: FaUsers}
+    {name: "Categories", href:"/dashboard/categories", icon: BiCategory  },
+    {name: "Banners", href: "/dashboard/customers", icon: RiAdvertisementLine},
+    {name: "Customers", href: "/dashboard/customers", icon: FaUsers},
     ]
 
 const NavLink = ()=> {
