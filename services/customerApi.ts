@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export type Customer = {
-  cx_id: number,
+  cx_id: number,// para que se valide con el Table.tsx
             cx_first_name: string,
             cx_last_name: string,
             cx_email:string,

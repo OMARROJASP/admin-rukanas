@@ -11,7 +11,6 @@ import Table from "../../components/Table"
 const Customers = () => {
   const { data: responseCustomer, isLoading, error } = useGetCustomersQuery();
   const listCustomer: Customer[] = responseCustomer?.data ?? [];
-  console.log("customers:", listCustomer);
   return (
     <>
       <div className="mb-4 px-4 py-2">
@@ -20,6 +19,7 @@ const Customers = () => {
         {error && <p>Error loading data</p>}
         <Table<Customer>
           data={listCustomer}
+          rowKey="cx_id"
           columns={[
             { key: "cx_id", header: "ID" },
             { key: "cx_first_name", header: "First Name" },

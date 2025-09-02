@@ -8,7 +8,7 @@ const links = [
     {name: "Dashboard", href: "/dashboard", icon: FaHome},
     {name: "Products", href:"/dashboard/products", icon: FaProductHunt },
     {name: "Categories", href:"/dashboard/categories", icon: BiCategory  },
-    {name: "Banners", href: "/dashboard/customers", icon: RiAdvertisementLine},
+    {name: "Banners", href: "/dashboard/banners", icon: RiAdvertisementLine},
     {name: "Customers", href: "/dashboard/customers", icon: FaUsers},
     ]
 

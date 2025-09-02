@@ -1,5 +1,6 @@
 // import { createSlice } from "@reduxjs/toolkit";
 
+import { categoryApi } from "@/services/categoryApi";
 import { customerApi } from "@/services/customerApi";
 import { configureStore } from "@reduxjs/toolkit";
 
@@ -40,9 +41,10 @@ import { configureStore } from "@reduxjs/toolkit";
 export const store = configureStore({
     reducer: {
         [customerApi.reducerPath]: customerApi.reducer,
+        [categoryApi.reducerPath]: categoryApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(customerApi.middleware), 
+    getDefaultMiddleware().concat(customerApi.middleware,categoryApi.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>;

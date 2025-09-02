@@ -9,11 +9,13 @@ type Columns<T> = {
 type TableProps<T> = {
   data: T[];
   columns: Columns<T>[];
+  rowKey: keyof T;
 };
 
-export default function Table<T extends { cx_id: number | string }>({
+export default function Table<T>({
   data,
-  columns,
+  rowKey,
+  columns  
 }: TableProps<T>) {
     return (
         <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
@@ -29,7 +31,7 @@ export default function Table<T extends { cx_id: number | string }>({
         </thead>
         <tbody>
             {data.map((row) => (
-                <tr key={row.cx_id} className="border-b hover:bg-gray-50">
+                <tr key={String(row[rowKey])} className="border-b hover:bg-gray-50">
                     {columns.map((col) => (
                         <td key={String(col.key)} className="px-4 py-2">
                             {col.render ? col.render(row) : String(row[col.key])}

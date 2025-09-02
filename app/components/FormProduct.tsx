@@ -111,17 +111,6 @@ const Page:FC<FormProductProps> =  ({categories, producto}) => {
       <form onSubmit={handleSubmit} className="p-4 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold mb-4">Editar Producto</h1>
         <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* {typeof product.prod_imageUrl === "string" && product.prod_imageUrl !== "" && (
-            <div className="mb-4 col-span-3 sm:col-span-1 flex justify-center items-center" >
-               <Image
-                src={product.prod_imageUrl}
-                alt={product.prod_name}
-                width={400}   // puedes ajustar a lo que quieras
-                height={300}
-                className="w-full h-auto rounded-md mb-2"
-              />
-            </div>
-          ) } */}
           <div className="mb-4 col-span-2">
             <label className="block text-sm font-medium text-gray-700">
               Imagen
