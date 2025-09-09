@@ -7,6 +7,7 @@ import {
   type responseCustomer,
 } from "@/services/customerApi";
 import Table from "../../components/Table"
+import SearchC from "@/app/components/SearchC";
 
 const Customers = () => {
   const { data: responseCustomer, isLoading, error } = useGetCustomersQuery();
@@ -15,6 +16,7 @@ const Customers = () => {
     <>
       <div className="mb-4 px-4 py-2">
         <h1 className="text-black text-center text-2xl mb-3">Customers</h1>
+        <SearchC />
         {isLoading && <p>Loading...</p>}
         {error && <p>Error loading data</p>}
         <Table<Customer>

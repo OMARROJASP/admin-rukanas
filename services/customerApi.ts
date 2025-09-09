@@ -22,7 +22,9 @@ export const customerApi = createApi({
         getCustomers: builder.query<responseCustomer, void>({
             query: () => '/customer'
         }),
-
+        getCustomerFilter: builder.query<responseCustomer, {name: string}>({
+          query: ({name}) => `/customer?name=${name}`
+        }),
         createCustomer: builder.mutation<void, { name: string }>({
         query: (body) => ({
         url: "/customers",
@@ -36,8 +38,6 @@ export const customerApi = createApi({
 
 
     }),
-
-   
 })
-export const { useGetCustomersQuery, useCreateCustomerMutation } = customerApi;
+export const { useGetCustomersQuery, useGetCustomerFilterQuery, useCreateCustomerMutation } = customerApi;
 

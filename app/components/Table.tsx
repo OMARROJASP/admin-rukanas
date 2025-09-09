@@ -21,25 +21,26 @@ export default function Table<T>({
         <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
             <table className=" min-w-full  border border-gray-200 rounded-lg">
             <thead>
-                <tr className="bg-gray-100">
-                {columns.map((col) => (
-               <th key={String(col.key)} className="px-4 py-2 text-left border-b">
-                {col.header}
-                </th>
-            ))}
-            </tr>
-        </thead>
-        <tbody>
-            {data.map((row) => (
-                <tr key={String(row[rowKey])} className="border-b hover:bg-gray-50">
-                    {columns.map((col) => (
-                        <td key={String(col.key)} className="px-4 py-2">
-                            {col.render ? col.render(row) : String(row[col.key])}
-                        </td>
-                    ))}
-                </tr>
-            ))}
-        </tbody>
+  <tr className="bg-gray-100">
+    {columns.map((col) => (
+      <th key={String(col.key)} className="px-4 py-2 text-left border-b">
+        {col.header}
+      </th>
+    ))}
+  </tr>
+</thead>
+<tbody>
+  {data.map((row) => (
+    <tr key={String(row[rowKey])} className="border-b hover:bg-gray-50">
+      {columns.map((col) => (
+        <td key={`${String(row[rowKey])}-${String(col.key)}`} className="px-4 py-2">
+          {col.render ? col.render(row) : String(row[col.key])}
+        </td>
+      ))}
+    </tr>
+  ))}
+</tbody>
+
     </table>
             
         </div>

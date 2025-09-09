@@ -14,6 +14,11 @@ export type responseCategory = {
     message: string;
 }
 
+export type responseCategoryUpdate = {
+    data:  Category;
+    message: string;
+}
+
 export const categoryApi = createApi({
     reducerPath: 'categoryApi',
     baseQuery: fetchBaseQuery({baseUrl:"http://localhost:3001"}),
@@ -22,19 +27,32 @@ export const categoryApi = createApi({
             query: () => '/category'
         }),
 
+        getCategoryById: builder.query<Category, number>({
+            query: (id) => `category/${id}`
+        }),
+
         createCategory: builder.mutation<responseCategory, 
             FormData >({
         query: (formData) => ({
         url: "/category",
         method: "POST",
         body:formData,
-      }),
-    }),
+        }),
+        
+        }),
+        updateCategory: builder.mutation<responseCategoryUpdate, {id?: number, body: FormData} >({
+        query: ({id, body}) => ({
+        url: `/category/${id}`, 
+        method: "PUT",
+        body:body,
+        }),
+        
+        }),
 
 
     }),
 
    
 })
-export const { useGetCategoryQuery, useCreateCategoryMutation } = categoryApi;
+export const { useGetCategoryQuery, useGetCategoryByIdQuery, useUpdateCategoryMutation, useCreateCategoryMutation } = categoryApi;
 

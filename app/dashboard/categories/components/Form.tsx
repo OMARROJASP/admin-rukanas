@@ -1,143 +1,151 @@
-"use client"
+"use client";
+import { FC, useEffect, useState } from "react";
+import {
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  type Category,
+} from "@/services/categoryApi";
+import { useRouter } from 'next/navigation';
+import { toast } from "sonner";
 
-import { useCreateCategoryMutation } from "@/services/categoryApi";
-import { useState } from "react";
-
-interface Category {
-  cat_name: string;
-  cat_description: string;  
-  cat_imageUrl: File ;
-  cat_status: string;
-  cat_area: string;
+interface CategoryFormProps {
+  initialData?: Category; // si viene, es edición
 }
 
-const FormCategory = ()  => {
-  const [createCategory, { isLoading, isSuccess, error }] = useCreateCategoryMutation();
+const CategoryForm: FC<CategoryFormProps> = ({ initialData }) => {
+  const router = useRouter();
+  const [createCategory] = useCreateCategoryMutation();
+  const [updateCategory] = useUpdateCategoryMutation();
 
-  const [form, setForm] = useState<Category>({
+  const [form, setForm] = useState({
     cat_name: "",
-    cat_description: "",  
-    cat_imageUrl: "" as unknown as File,
-    cat_status: "",
-    cat_area: ""
+    cat_description: "",
+    cat_imageUrl: null as File | null,
+    cat_status: "1",
+    cat_area: "",
   });
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        cat_name: initialData.cat_name,
+        cat_description: initialData.cat_description,
+        cat_imageUrl: null, // al editar no cargamos la imagen previa
+        cat_status: initialData.cat_status,
+        cat_area: initialData.cat_area,
+      });
+    }
+  }, [initialData]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    setLoading(true);
-    // Aquí puedes manejar el envío del formulario, por ejemplo, enviarlo a una API
-    console.log("Form data:", form);
-    const formData = new FormData()
-    // const values = {
-    //   cat_name: formData.get(form.cat_name) as string,
-    //   cat_description: formData.get(form.cat_description) as string,
-    //   cat_imageUrl: formData.get(form.cat_imageUrl) as File,
-    //   cat_status: formData.get(form.cat_status) as string,
-    //   cat_area: formData.get(form.cat_area) as string,
-      
-    // }
+    const formData = new FormData();
     formData.append("cat_name", form.cat_name);
-       formData.append("cat_description", form.cat_description); 
-       if (typeof form.cat_imageUrl === "object") {
-         formData.append("cat_imageUrl", form.cat_imageUrl);
-       }
-       formData.append("cat_status", form.cat_status);
-       formData.append("cat_area", form.cat_area);
-    setLoading(false);
+    formData.append("cat_description", form.cat_description);
+    if (form.cat_imageUrl) {
+      formData.append("cat_imageUrl", form.cat_imageUrl);
+    }
+    formData.append("cat_status", form.cat_status);
+    formData.append("cat_area", form.cat_area);
 
     try {
-      const res = await createCategory(formData).unwrap();// unwrap lanza error si falla ojo a eso xd
-      console.log("Category created:", res);
-    }catch (error) {
-      console.error("Error creando categoría ❌", error);
-    } finally {
-      setLoading(false);
-    }
+      if (initialData) {
+        // EDITAR
+        await updateCategory({ id: initialData.cat_id, body: formData }).unwrap();
+        console.log("✅ Categoría actualizada");
+        toast.success("✅ Categoría actualizada");
+      } else {
+        // CREAR
+        await createCategory(formData).unwrap();
+        toast.success("✅ Categoría creada");
+      }
+      router.push('/dashboard/categories');
+    } catch (err) {
+      console.error("❌ Error en la categoría", err);
+      toast.error("❌ Error al guardar la categoría");
+    } 
+  };
 
-       
-    }
-      
-    
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 bg-white rounded-lg shadow-md space-y-4"
+    >
+      <h2 className="text-lg font-semibold">
+        {initialData ? "Editar Categoría" : "Crear Categoría"}
+      </h2>
 
+      <div>
+        <label className="block text-sm font-medium">Nombre</label>
+        <input
+          type="text"
+          value={form.cat_name}
+          onChange={(e) => setForm({ ...form, cat_name: e.target.value })}
+          className="mt-1 block w-full border rounded px-2 py-1"
+        />
+      </div>
 
+      <div>
+        <label className="block text-sm font-medium">Descripción</label>
+        <input
+          type="text"
+          value={form.cat_description}
+          onChange={(e) =>
+            setForm({ ...form, cat_description: e.target.value })
+          }
+          className="mt-1 block w-full border rounded px-2 py-1"
+        />
+      </div>
 
+      <div>
+        <label className="block text-sm font-medium">Imagen</label>
+        <input
+          type="file"
+          onChange={(e) =>
+            setForm({
+              ...form,
+              cat_imageUrl: e.target.files ? e.target.files[0] : null,
+            })
+          }
+          className="mt-1 block w-full"
+        />
+        {/* {initialData?.cat_imageUrl && (
+          <p className="text-xs text-gray-500">
+            Imagen actual: {initialData.cat_imageUrl}
+          </p>
+        )} */}
+      </div>
 
+      <div>
+        <label className="block text-sm font-medium">Estado</label>
+        <select
+          value={form.cat_status}
+          onChange={(e) => setForm({ ...form, cat_status: e.target.value })}
+          className="mt-1 block w-full border rounded px-2 py-1"
+        >
+          <option value="0">Oculto</option>
+          <option value="1">Visible</option>
+        </select>
+      </div>
 
-    return (
-        <>
-          <form onSubmit={handleSubmit} className="p-4 bg-white rounded-lg shadow-md">
-              <div>
-                <h2>Creación de Categoria</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  {/* NOMBRE  */}
-                <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Nombre de la Categoria</label>
-                  <input 
-                    type="text"
-                    value={form.cat_name}
-                    onChange={(e) => setForm({...form, cat_name: e.target.value})}
-                    className="mt-1 block w-full border-gray-500 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 h-[30px]"
-                  />
-                </div>
-                  {/* DESCRIPTION  */}
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Descripción de la Categoria</label>
-                  <input 
-                    type="text"
-                    value={form.cat_description}
-                    onChange={(e) => setForm({...form, cat_description: e.target.value})}
-                    className="mt-1 block w-full border-gray-500 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 h-[30px]"
-                  />
-                </div>
-                  {/* IMAGEN  */}
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Imagen de la Categoria</label>
-                  <input 
-                    type="file"
-                    onChange={(e) => {
-                      const file = e.target.files ? e.target.files[0] : null;
-                if (file){
-                  setForm({ ...form, cat_imageUrl: file })
-                }  
-                    }}
-                    className="mt-1 block w-full border-gray-500 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 h-[30px]"
-                  />
-                </div>
-                  {/* ESTADO  */}
-                  <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Estado de la Categoria</label>
-                  <select
-                    value={form.cat_status ? "1" : "0"}
-                    onChange={(e) => setForm({...form, cat_status: e.target.value})}
-                    className="mt-1 block w-full border-gray-500 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 h-[30px]"
-                    >
-                      <option value="0">Oculto</option>
-                      <option value="1">Visible </option>
-                  </select>
-                </div>
-                {/* AREA  */}
-                <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Area de la Categoria</label>
-                  <input 
-                    type="text"
-                    value={form.cat_area}
-                    onChange={(e) => setForm({...form, cat_area: e.target.value})}
-                    className="mt-1 block w-full border-gray-500 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 h-[30px]"
-                  />
-                </div>
-              </div>
-              <div>
-                <button type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                  Guardar
-                </button>
-              </div>
-          </form>
-        </>
-    );
-}
+      <div>
+        <label className="block text-sm font-medium">Área</label>
+        <input
+          type="text"
+          value={form.cat_area}
+          onChange={(e) => setForm({ ...form, cat_area: e.target.value })}
+          className="mt-1 block w-full border rounded px-2 py-1"
+        />
+      </div>
 
-export default FormCategory;
+      <button
+        type="submit"
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        {initialData ? "Actualizar" : "Crear"}
+      </button>
+    </form>
+  );
+};
+
+export default CategoryForm;

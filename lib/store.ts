@@ -3,7 +3,7 @@
 import { categoryApi } from "@/services/categoryApi";
 import { customerApi } from "@/services/customerApi";
 import { configureStore } from "@reduxjs/toolkit";
-
+import categoryReducer from "@/features/categories/categorySlice";
 // interface customerState {
 //     id:number | null;
 //     first_name:string | null;
@@ -42,6 +42,7 @@ export const store = configureStore({
     reducer: {
         [customerApi.reducerPath]: customerApi.reducer,
         [categoryApi.reducerPath]: categoryApi.reducer,
+        category: categoryReducer
     },
     middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(customerApi.middleware,categoryApi.middleware)
