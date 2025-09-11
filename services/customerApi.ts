@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+
 export type Customer = {
   cx_id: number,// para que se valide con el Table.tsx
             cx_first_name: string,
@@ -10,8 +11,22 @@ export type Customer = {
             cx_city: string,
             cx_postal_code: string
 }
+export type pagination = {
+  totalItems: Customer[];
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+}
+export type FilterCustomer = {
+    customersTotal: Customer[];
+    pagination: pagination;
+}
 export type responseCustomer = {
     data: Customer[];
+    message: string;
+}
+export type responseCustomerFilter = {
+    data: FilterCustomer;
     message: string;
 }
 
@@ -22,9 +37,17 @@ export const customerApi = createApi({
         getCustomers: builder.query<responseCustomer, void>({
             query: () => '/customer'
         }),
-        getCustomerFilter: builder.query<responseCustomer, {name: string}>({
-          query: ({name}) => `/customer?name=${name}`
-        }),
+        getCustomerFilter: builder.query<responseCustomerFilter, { text?: string }>({
+  query: ({ text } = {}) => {
+    let url = "/customer/filter";
+    if (text && text.trim() !== "") {
+      url += `?text=${encodeURIComponent(text)}`;
+    }
+    return url;
+  },
+}),
+
+        
         createCustomer: builder.mutation<void, { name: string }>({
         query: (body) => ({
         url: "/customers",

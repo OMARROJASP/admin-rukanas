@@ -1,36 +1,36 @@
 "use client";
 
-import Search from "@/app/components/Search";
+import SearchC from "@/app/components/SearchC";
 import Table from "@/app/components/Table";
 import { setSelectdCategory } from "@/features/categories/categorySlice";
 import {
   type Category,
-  useGetCategoryQuery,
+  useGetCategoriesFilterQuery,
 } from "@/services/categoryApi";
 import Link from "next/link";
+import React from "react";
 import { useDispatch } from "react-redux";
 
 
 const Categories = () => {
+  const [search, setSearch] = React.useState<string>("");
     // const { data: responseCategory, isLoading, error } = useGetCategoryQuery();
-    const { data : responseCategory, isLoading,error, refetch } = useGetCategoryQuery(undefined, {
+    const { data : responseCategory, isLoading,error, refetch } = useGetCategoriesFilterQuery( search ? { text: search } : {}, {
   refetchOnMountOrArgChange: true, // 🔑 fuerza refetch cada vez que entras
   refetchOnFocus: true,            // 🔑 refetch si el usuario vuelve a la pestaña
   refetchOnReconnect: true         // 🔑 refetch si recupera conexión
 });
 
-    const listCategory: Category[] = Array.isArray(responseCategory?.data) 
-    ? responseCategory.data 
-    : responseCategory?.data 
-      ? [responseCategory.data] 
-      : [];
+    const listCategory = search && responseCategory?.data.categoriesTotal
+    ? responseCategory.data.categoriesTotal
+    : responseCategory?.data.categoriesTotal ?? [];
 
       const dispatch = useDispatch();
     return (
     <>
       <div className="mb-4 px-4 py-2">
         <h1 className="text-black text-center text-2xl mb-3">Customers</h1>
-        <Search />
+        <SearchC onSend={setSearch}/>
           <button className="mb-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
             <Link href="/dashboard/categories/create">Agregar Categoría</Link>
         </button>

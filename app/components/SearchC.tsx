@@ -3,7 +3,12 @@ import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-const SearchC = () => {
+
+type SearchCProps = {
+    onSend: (text: string) => void
+}
+
+const SearchC = ({onSend}:SearchCProps) => {
 
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -17,8 +22,14 @@ const SearchC = () => {
         } else {
             params.delete("text")
         }
+        getCustomers(value)
+        replace(`${pathname}?${params.toString()}`);
     }, 1000)
     const [text, setText] = useState(searchParams.get("text") || "");
+
+    const getCustomers = async(texto: string) => {
+        onSend(texto)
+    }
     return (
        <div className="mb-4 flex">
       <input

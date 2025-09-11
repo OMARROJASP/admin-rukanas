@@ -18,6 +18,20 @@ export type responseCategoryUpdate = {
     data:  Category;
     message: string;
 }
+export type pagination = {
+  totalItems: Category[];
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+}
+export type FilterCategory = {
+    categoriesTotal: Category[];
+    pagination: pagination;
+}
+export type responseCategoryFilter = {
+    data: FilterCategory;
+    message: string;
+}
 
 export const categoryApi = createApi({
     reducerPath: 'categoryApi',
@@ -30,7 +44,23 @@ export const categoryApi = createApi({
         getCategoryById: builder.query<Category, number>({
             query: (id) => `category/${id}`
         }),
+        getCategoriesFilter: builder.query<responseCategoryFilter, { text?: string, pag?: number }>({
+        query:({text, pag = 1} = {}) => {
+            let url = "/category/filter";
 
+            if (pag && pag > 0) {
+                url += `?page=${encodeURIComponent(pag.toString())}`;
+               //  url += text && text.trim() !== "" ? `&pag=${pag}` : `?pag=${pag}`;
+            }
+    
+            if (text && text.trim() !== "") {
+                url += `&text=${encodeURIComponent(text)}`;
+            }
+
+            
+            return url;
+        }
+        }),
         createCategory: builder.mutation<responseCategory, 
             FormData >({
         query: (formData) => ({
@@ -54,5 +84,5 @@ export const categoryApi = createApi({
 
    
 })
-export const { useGetCategoryQuery, useGetCategoryByIdQuery, useUpdateCategoryMutation, useCreateCategoryMutation } = categoryApi;
+export const { useGetCategoryQuery, useGetCategoryByIdQuery, useUpdateCategoryMutation, useGetCategoriesFilterQuery, useCreateCategoryMutation } = categoryApi;
 

@@ -18,7 +18,7 @@ const Search = () => {
       params.delete("text");
     }
     dai(text)
-     replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`);
   }, 1000);
 
   const dai = async(texto: string) => {
