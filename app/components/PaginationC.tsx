@@ -16,11 +16,11 @@ import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 interface PaginationProps {
     text?: string;
-    pageTotal?:number
+    pageTotal?:number;
+    ContPage:(text: number) => void
 }
 
-
-const PaginacionC: FC<PaginationProps> =({text,pageTotal=3 }) => {
+const PaginacionC: FC<PaginationProps> =({text, pageTotal=3, ContPage }) => {
 
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -36,7 +36,7 @@ const PaginacionC: FC<PaginationProps> =({text,pageTotal=3 }) => {
     } else {
       params.delete("page");
     }
-
+ContPage(page)
 
          //   await fetchProductsByFilters(text,page)
              replace(`${pathname}?${params.toString()}`);

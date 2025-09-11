@@ -7,16 +7,19 @@ import {
 } from "@/services/customerApi";
 import Table from "../../components/Table";
 import SearchC from "@/app/components/SearchC";
-import Paginacion from "@/app/components/PaginationC";
+import PaginacionC from "@/app/components/PaginationC";
+import { useSearchParams } from "next/navigation";
 
 const Customers = () => {
-  const [search, setSearch] = React.useState<string>("");
-  const [page, setPage] = React.useState<string>("1");
+   const searchParams = useSearchParams();
+  const _text = searchParams.get("text") ?? "";
+   const _page = Number(searchParams.get("page")) || 1;
+   
+   const [search, setSearch] = React.useState<string>(_text);
+   const [page, setPage] = React.useState<number>(_page);
 
   // Hook para todos los clientes
- const { data: filteredCustomers, isLoading, error } = useGetCustomerFilterQuery(
-    (search && page) ? { text: search, pag: page } : {}
-  );
+ const { data: filteredCustomers, isLoading, error } = useGetCustomerFilterQuery({ text: search, pag:page });
   const totalPages = filteredCustomers?.data.pagination.totalPages ?? 1;
   // Escoge qué datos mostrar
   const listCustomers =
@@ -52,7 +55,7 @@ const Customers = () => {
           { key: "cx_postal_code", header: "Zip Code" },
         ]}
       />
-       <Paginacion text={setSearch} pageTotal={setPage}/>  
+       <PaginacionC text={search} pageTotal={totalPages} ContPage={setPage}/>  
     </div>
   );
 };

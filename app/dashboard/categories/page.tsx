@@ -1,5 +1,6 @@
 "use client";
 
+import PaginacionC from "@/app/components/PaginationC";
 import SearchC from "@/app/components/SearchC";
 import Table from "@/app/components/Table";
 import { setSelectdCategory } from "@/features/categories/categorySlice";
@@ -8,19 +9,28 @@ import {
   useGetCategoriesFilterQuery,
 } from "@/services/categoryApi";
 import Link from "next/link";
+import {  useSearchParams } from "next/navigation";
 import React from "react";
 import { useDispatch } from "react-redux";
 
 
 const Categories = () => {
-  const [search, setSearch] = React.useState<string>("");
+  const searchParams = useSearchParams();
+ const _text = searchParams.get("text") ?? "";
+  const _page = Number(searchParams.get("page")) || 1;
+  
+  const [search, setSearch] = React.useState<string>(_text);
+  const [page, setPage] = React.useState<number>(_page);
+
+ 
+
     // const { data: responseCategory, isLoading, error } = useGetCategoryQuery();
-    const { data : responseCategory, isLoading,error, refetch } = useGetCategoriesFilterQuery( search ? { text: search } : {}, {
+    const { data : responseCategory, isLoading,error, refetch } = useGetCategoriesFilterQuery({ text: search, pag:page }, {
   refetchOnMountOrArgChange: true, // 🔑 fuerza refetch cada vez que entras
   refetchOnFocus: true,            // 🔑 refetch si el usuario vuelve a la pestaña
   refetchOnReconnect: true         // 🔑 refetch si recupera conexión
 });
-
+ const totalPages = responseCategory?.data.pagination.totalPages ?? 1;
     const listCategory = search && responseCategory?.data.categoriesTotal
     ? responseCategory.data.categoriesTotal
     : responseCategory?.data.categoriesTotal ?? [];
@@ -77,6 +87,7 @@ const Categories = () => {
     },
           ]}
         />
+         <PaginacionC text={search} pageTotal={totalPages} ContPage={setPage}/>  
       </div>
     </>
   );

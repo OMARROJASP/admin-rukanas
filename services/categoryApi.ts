@@ -57,7 +57,7 @@ export const categoryApi = createApi({
                 url += `&text=${encodeURIComponent(text)}`;
             }
 
-            
+            url += `&limit=10`
             return url;
         }
         }),

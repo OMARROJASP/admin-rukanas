@@ -37,14 +37,22 @@ export const customerApi = createApi({
         getCustomers: builder.query<responseCustomer, void>({
             query: () => '/customer'
         }),
-        getCustomerFilter: builder.query<responseCustomerFilter, { text?: string }>({
-  query: ({ text } = {}) => {
-    let url = "/customer/filter";
-    if (text && text.trim() !== "") {
-      url += `?text=${encodeURIComponent(text)}`;
-    }
-    return url;
-  },
+        getCustomerFilter: builder.query<responseCustomerFilter, { text?: string, pag?:number }>({
+  query:({text, pag = 1} = {}) => {
+            let url = "/customer/filter";
+
+            if (pag && pag > 0) {
+                url += `?page=${encodeURIComponent(pag.toString())}`;
+               //  url += text && text.trim() !== "" ? `&pag=${pag}` : `?pag=${pag}`;
+            }
+    
+            if (text && text.trim() !== "") {
+                url += `&text=${encodeURIComponent(text)}`;
+            }
+
+             url += `&limit=10`
+            return url;
+        },
 }),
 
         
