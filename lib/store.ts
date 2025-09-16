@@ -4,6 +4,9 @@ import { categoryApi } from "@/services/categoryApi";
 import { customerApi } from "@/services/customerApi";
 import { configureStore } from "@reduxjs/toolkit";
 import categoryReducer from "@/features/categories/categorySlice";
+import bannerReducer from "@/features/banner/bannerSlice";
+import { bannerApi } from "@/services/bannerApi";
+import { authApi } from "@/services/authApi";
 // interface customerState {
 //     id:number | null;
 //     first_name:string | null;
@@ -42,10 +45,13 @@ export const store = configureStore({
     reducer: {
         [customerApi.reducerPath]: customerApi.reducer,
         [categoryApi.reducerPath]: categoryApi.reducer,
-        category: categoryReducer
+        [bannerApi.reducerPath]: bannerApi.reducer,
+        [authApi.reducerPath]: authApi.reducer,
+        category: categoryReducer,
+        banner: bannerReducer,
     },
     middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(customerApi.middleware,categoryApi.middleware)
+    getDefaultMiddleware().concat(customerApi.middleware,categoryApi.middleware, bannerApi.middleware, authApi.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -32,7 +32,11 @@ export type responseCustomerFilter = {
 
 export const customerApi = createApi({
     reducerPath: 'customerApi',
-    baseQuery: fetchBaseQuery({baseUrl:"http://localhost:3001"}),
+    baseQuery: fetchBaseQuery({
+        baseUrl:"http://localhost:3001",
+        credentials: "include",
+    }),
+   
     endpoints: (builder) => ({
         getCustomers: builder.query<responseCustomer, void>({
             query: () => '/customer'

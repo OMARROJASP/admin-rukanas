@@ -1,6 +1,7 @@
 import { BsArrowRight } from "react-icons/bs";
 import Header from "./components/Header";
 import { bebas } from "./ui/font";
+import Login from "./components/Login";
 
 export default function Home() {
   return (
@@ -13,7 +14,7 @@ export default function Home() {
             , panel de administracion de la aplicacion
           </p>
           <a 
-            href="#"
+            href="./login"
             className="flex items-center gap-5 self-start rounded-lg 
             bg-blue-500 px-6 py-3 text-sm font-medium text-white
                         transition-colors hover:bg-blue-400 md:text-base"
